@@ -55,25 +55,17 @@ class GuardianPlugin(BaseAdminPlugin):
     def init_request(self, *args, **kwargs):
         return True
 
-    def get_queryset(self, request):
-        # Prefer the Django >= 1.6 interface but maintain
-        # backward compatibility
-        method = getattr(
-            super(GuardianPlugin, self), 'get_queryset',
-            getattr(super(GuardianPlugin, self), 'queryset', None))
-        qs = method(request)
-
-        if request.user.is_superuser:
+    def queryset(self, qs):
+        if self.request.user.is_superuser:
             return qs
-
         if self.user_can_access_owned_objects_only:
-            filters = {self.user_owned_objects_field: request.user}
+            filters = {self.user_owned_objects_field: self.request.user}
             qs = qs.filter(**filters)
         if self.user_can_access_owned_by_group_objects_only:
             User = get_user_model()
             user_rel_name = User.groups.field.related_query_name()
             qs_key = '%s__%s' % (self.group_owned_objects_field, user_rel_name)
-            filters = {qs_key: request.user}
+            filters = {qs_key: self.request.user}
             qs = qs.filter(**filters)
         return qs
 
