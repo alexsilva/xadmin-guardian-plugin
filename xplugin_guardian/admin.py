@@ -53,7 +53,7 @@ class GuardianPlugin(BaseAdminPlugin):
     include_object_permissions_urls = True
 
     def init_request(self, *args, **kwargs):
-        return True
+        return getattr(self, 'guarded_model', False)
 
     def queryset(self, qs):
         if self.request.user.is_superuser:
