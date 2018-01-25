@@ -193,6 +193,7 @@ class GuardianManageView(GuardianCommonView):
     def __init__(self, *args, **kwargs):
         self.app_label = kwargs['app_label']
         self.model_name = kwargs['model_name']
+        self.object_pk = kwargs['object_pk']
         self.model = self.get_model(self.app_label, self.model_name)
         self.opts = self.model._meta
         super(GuardianManageView, self).__init__(*args, **kwargs)
@@ -205,9 +206,9 @@ class GuardianManageView(GuardianCommonView):
         return self.model.objects.all()
 
     def get(self, request, **kwargs):
-        return self.obj_perms_manage_view(request, kwargs['object_pk'])
+        return self.obj_perms_manage_view(request, **kwargs)
 
-    def obj_perms_manage_view(self, request, object_pk):
+    def obj_perms_manage_view(self, request, **kwargs):
         """
         Main object permissions view. Presents all users and groups with any
         object permissions for the current model *instance*. Users or groups
@@ -222,7 +223,7 @@ class GuardianManageView(GuardianCommonView):
             post_url = reverse('xadmin:index', current_app=current_app)
             return redirect(post_url)
 
-        obj = get_object_or_404(self.get_queryset(), pk=unquote(object_pk))
+        obj = get_object_or_404(self.get_queryset(), pk=unquote(self.object_pk))
 
         users_perms = OrderedDict(
             sorted(
@@ -284,6 +285,9 @@ class GuardianManageView(GuardianCommonView):
         request.current_app = current_app
 
         return render(request, self.get_obj_perms_manage_template(), context)
+
+    def post(self, request, **kwargs):
+        return self.get(request, **kwargs)
 
 
 class GuardianManageUserView(GuardianCommonView):
