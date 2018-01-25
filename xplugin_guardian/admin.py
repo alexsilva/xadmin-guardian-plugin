@@ -208,6 +208,13 @@ class GuardianManageView(GuardianCommonView):
     def get(self, request, **kwargs):
         return self.obj_perms_manage_view(request, **kwargs)
 
+    def get_media(self):
+        media = super(GuardianManageView, self).get_media()
+        media.add_js((
+            settings.STATIC_URL + "xguardian/js/perms.manage.form.js",
+        ))
+        return media
+
     def obj_perms_manage_view(self, request, **kwargs):
         """
         Main object permissions view. Presents all users and groups with any
@@ -276,6 +283,7 @@ class GuardianManageView(GuardianCommonView):
             group_form = self.get_obj_perms_group_select_form(request)()
 
         context = self.get_obj_perms_base_context(request, obj)
+
         context['users_perms'] = users_perms
         context['groups_perms'] = groups_perms
         context['user_form'] = user_form
