@@ -1,11 +1,29 @@
 {% extends base_template %}
+{% load i18n %}
+
+{% block nav_title %}
+    {{ user_obj }}     {{ user_perms }}
+{% endblock %}
 
 {% block content %}
-    {{ user_perms }}
-    {{ user_obj }}
-
-    <form action="" method="post">{% csrf_token %}
-        {{ form }}
+    <form class="exform" method="post">{% csrf_token %}
+        <div class="form-container row">
+            <div class="col-sm-12 form-horizontal">
+                <div class="panel panel-default fieldset">
+                    <div class="panel-body">
+                        {{ form }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-actions well well-sm">
+            <button type="submit" class="default btn btn-primary" name="_save" data-loading-text="{% trans "Saving.." %}">
+                <i class="fa fa-save"></i> {% trans 'Save' %}
+            </button>
+        </div>
     </form>
+{% endblock %}
 
+{% block extrabody %}
+    {{ form.media }}
 {% endblock %}

@@ -4,16 +4,21 @@
     {{ users_perms }}
     {{ groups_perms }}
 
-    <form action="" method="post">{% csrf_token %}
-        {{ user_form }}
-        <input type="hidden" name="submit_manage_user" value="1"/>
+    <form action="" class="form" method="post">{% csrf_token %}
+        <div class="form-group">
+            {{ user_form }}
+            <input type="hidden" name="submit_manage_user" value="1"/>
+        </div>
+
         <button class="btn btn-success" type="submit">Send</button>
     </form>
 
 
-    <form action="" method="post">{% csrf_token %}
-        {{ group_form }}
-        <input type="hidden" name="submit_manage_group" value="1"/>
+    <form action="" class="form" method="post">{% csrf_token %}
+         <div class="form-group">
+             {{ group_form }}
+            <input type="hidden" name="submit_manage_group" value="1"/>
+         </div>
         <button class="btn btn-success" type="submit">Send</button>
     </form>
 {% endblock %}

@@ -4,8 +4,10 @@
     {{ group_perms }}
     {{ group_obj }}
 
-    <form action="" method="post">{% csrf_token %}
+    <form action="" class="form" method="post">{% csrf_token %}
+        <div class="form-group">
         {{ form }}
+         </div>
     </form>
 
 {% endblock %}

@@ -34,8 +34,9 @@ from guardian.shortcuts import (
     get_user_perms,
     get_users_with_perms
 )
-from xadmin.views import BaseAdminPlugin, CommAdminView
+from xadmin.views import BaseAdminPlugin, CommAdminView, filter_hook
 from xadmin import site
+from . import forms
 
 
 class GuardianPlugin(BaseAdminPlugin):
@@ -166,7 +167,7 @@ class GuardianCommonView(CommAdminView):
         Returns form class for user object permissions management.  By default
         :form:`AdminUserObjectPermissionsForm` is returned.
         """
-        return AdminUserObjectPermissionsForm
+        return forms.AdminUserObjectPermissionsForm
 
     def get_obj_perms_manage_group_template(self):
         """
@@ -262,11 +263,7 @@ class GuardianManageView(GuardianCommonView):
         elif request.method == 'POST' and 'submit_manage_group' in request.POST:
             user_form = self.get_obj_perms_user_select_form(request)(request.POST)
             group_form = self.get_obj_perms_group_select_form(request)(request.POST)
-            info = (
-                current_app,
-                self.opts.app_label,
-                get_model_name(self.model)
-            )
+
             if group_form.is_valid():
                 group_id = group_form.cleaned_data['group'].id
                 url = reverse(
@@ -302,6 +299,12 @@ class GuardianManageUserView(GuardianCommonView):
 
     def get(self, request, **kwargs):
         return self.obj_perms_manage_user_view(request, **kwargs)
+
+    @filter_hook
+    def get_media(self):
+        media = super(GuardianManageUserView, self).get_media()
+        media += self.vendor('xadmin.page.form.js', 'xadmin.form.css')
+        return media
 
     def obj_perms_manage_user_view(self, request, **kwargs):
         """
