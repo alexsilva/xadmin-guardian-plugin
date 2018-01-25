@@ -11,9 +11,7 @@ python -m pip install git+https://github.com/alexsilva/xadmin.plugin.guardian.gi
 ## Add to installed apps:
 
 INSTALLED_APPS = [
-    
-    `...`,
-    
+    ...,
     "xplugin_guardian"
 ]
 
@@ -36,7 +34,7 @@ site.register_plugin(GuardianPlugin, ModelAdminView)
 # Activate the plugin in this view (guarded_model = True)
 
 class MyModelAdmin(object):
-    guarded_model = True   # protegido por guardian
+    guarded_model = True   # protected by guardian
     
 
 # Replace MyModel with your model
