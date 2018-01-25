@@ -41,11 +41,6 @@ class GuardianPlugin(BaseAdminPlugin):
     Xadmin plugin
     """
 
-    change_form_template = 'xplugin_guardian/guardian/model/change_form.html'
-    obj_perms_manage_template = 'xplugin_guardian/guardian/model/obj_perms_manage.html'
-    obj_perms_manage_user_template = 'xplugin_guardian/guardian/model/obj_perms_manage_user.html'
-    obj_perms_manage_group_template = 'xplugin_guardian/guardian/model/obj_perms_manage_group.html'
-
     user_can_access_owned_objects_only = False
 
     user_owned_objects_field = 'user'
@@ -53,8 +48,6 @@ class GuardianPlugin(BaseAdminPlugin):
     user_can_access_owned_by_group_objects_only = False
 
     group_owned_objects_field = 'group'
-
-    include_object_permissions_urls = True
 
     guarded_model = False
 
