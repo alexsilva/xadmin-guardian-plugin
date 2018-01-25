@@ -2,13 +2,12 @@
 {% load i18n %}
 
 {% block nav_title %}
-    {% trans 'username' %}:<span class="label label-default">{{ user_obj }}</span>
+    {% trans 'group' %}:<span class="label label-default">{{ group_obj }}</span>
 {% endblock %}
 
 {% block content %}
     <form class="exform" method="post">{% csrf_token %}
-        {% include 'guardian/includes/form.container.html' %}
-
+        {% include 'xguardian/includes/form.container.html' %}
         <div class="form-actions well well-sm">
             <button type="submit" class="default btn btn-primary" name="_save" data-loading-text="{% trans "Saving.." %}">
                 <i class="fa fa-save"></i> {% trans 'Save' %}

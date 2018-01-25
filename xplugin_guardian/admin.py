@@ -88,14 +88,14 @@ class GuardianPlugin(BaseAdminPlugin):
 
     def block_nav_btns(self, context, nodes, *args, **kwargs):
         if isinstance(getattr(self.admin_view, 'org_obj', None), models.Model):  # is update view
-            return render_to_string("guardian/includes/permission_manage.html", context=context)
+            return render_to_string("xguardian/includes/permission_manage.html", context=context)
 
 
 class GuardianCommonView(CommAdminView):
-    change_form_template = 'guardian/model/change_form.html'
-    obj_perms_manage_template = 'guardian/model/obj_perms_manage.html'
-    obj_perms_manage_user_template = 'guardian/model/obj_perms_manage_user.html'
-    obj_perms_manage_group_template = 'guardian/model/obj_perms_manage_group.html'
+    change_form_template = 'xguardian/model/change_form.html'
+    obj_perms_manage_template = 'xguardian/model/obj_perms_manage.html'
+    obj_perms_manage_user_template = 'xguardian/model/obj_perms_manage_user.html'
+    obj_perms_manage_group_template = 'xguardian/model/obj_perms_manage_group.html'
 
     remove_permissions = []
 
