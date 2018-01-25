@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block nav_title %}
-    {{ user_obj }}     {{ user_perms }}
+    {% trans 'username' %}:<span class="label label-default">{{ user_obj }}</span>
 {% endblock %}
 
 {% block content %}
