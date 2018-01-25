@@ -1,0 +1,6 @@
+include README.rst
+include LICENSE
+include MANIFEST.in
+recursive-include xplugin_guardian/templates *
+recursive-include xplugin_guardian/locale *
+recursive-include xplugin_guardian/static *

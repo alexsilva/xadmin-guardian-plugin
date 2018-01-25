@@ -3,6 +3,7 @@ from setuptools import setup
 setup(
     name='xadmin-plugin-guardian',
     version='1.0.0',
+    include_package_data=True,
     packages=['xplugin_guardian'],
     url='https://github.com/alexsilva/xadmin.plugin.guardian',
     license='MIT',
