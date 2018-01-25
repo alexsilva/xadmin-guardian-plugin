@@ -389,16 +389,20 @@ class GuardianManageGroupView(GuardianCommonView):
         return self.get(request, **kwargs)
 
 
-base_regex = r'^(?P<app_label>.+)/(?P<model_name>.+)/(?P<object_pk>\d+)'
+def register_views(admin_site):
+    regex = r'^(?P<app_label>.+)/(?P<model_name>.+)/(?P<object_pk>\d+)'
 
-site.register_view(base_regex + r'/permissions/$',
-                   GuardianManageView,
-                   'guardian_permissions')
+    admin_site.register_view(regex + r'/permissions/$',
+                             GuardianManageView,
+                             'guardian_permissions')
 
-site.register_view(base_regex + r'/permissions/user-manage/(?P<user_id>\-?\d+)/$',
-                   GuardianManageUserView,
-                   'guardian_permissions_user')
+    admin_site.register_view(regex + r'/permissions/user-manage/(?P<user_id>\-?\d+)/$',
+                             GuardianManageUserView,
+                             'guardian_permissions_user')
 
-site.register_view(base_regex + r'/permissions/group-manage/(?P<group_id>\-?\d+)/$',
-                   GuardianManageGroupView,
-                   'guardian_permissions_group')
+    admin_site.register_view(regex + r'/permissions/group-manage/(?P<group_id>\-?\d+)/$',
+                             GuardianManageGroupView,
+                             'guardian_permissions_group')
+
+
+register_views(site)
