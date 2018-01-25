@@ -98,6 +98,21 @@ class GuardianCommonView(CommAdminView):
 
     remove_permissions = []
 
+    def __init__(self, *args, **kwargs):
+        self.app_label = kwargs['app_label']
+        self.model_name = kwargs['model_name']
+        self.object_pk = kwargs['object_pk']
+        self.model = self.get_model(self.app_label, self.model_name)
+        self.opts = self.model._meta
+        super(GuardianCommonView, self).__init__(*args, **kwargs)
+
+    @staticmethod
+    def get_model(app_label, model_name):
+        return apps.get_model(app_label, model_name)
+
+    def get_queryset(self):
+        return self.model.objects.all()
+
     def get_obj_perms_base_context(self, request, obj):
         """
         Returns context dictionary with common admin and object permissions related content.
@@ -190,21 +205,6 @@ class GuardianCommonView(CommAdminView):
 
 class GuardianManageView(GuardianCommonView):
 
-    def __init__(self, *args, **kwargs):
-        self.app_label = kwargs['app_label']
-        self.model_name = kwargs['model_name']
-        self.object_pk = kwargs['object_pk']
-        self.model = self.get_model(self.app_label, self.model_name)
-        self.opts = self.model._meta
-        super(GuardianManageView, self).__init__(*args, **kwargs)
-
-    @staticmethod
-    def get_model(app_label, model_name):
-        return apps.get_model(app_label, model_name)
-
-    def get_queryset(self):
-        return self.model.objects.all()
-
     def get(self, request, **kwargs):
         return self.obj_perms_manage_view(request, **kwargs)
 
@@ -251,16 +251,12 @@ class GuardianManageView(GuardianCommonView):
         if request.method == 'POST' and 'submit_manage_user' in request.POST:
             user_form = self.get_obj_perms_user_select_form(request)(request.POST)
             group_form = self.get_obj_perms_group_select_form(request)(request.POST)
-            info = (
-                current_app,
-                self.opts.app_label,
-                get_model_name(self.model)
-            )
+
             if user_form.is_valid():
                 user_id = user_form.cleaned_data['user'].pk
                 url = reverse(
-                    '%s:%s_%s_permissions_manage_user' % info,
-                    args=[obj.pk, user_id]
+                    '{0.admin_site.name}:guardian_permissions_user'.format(self),
+                    args=[self.app_label, self.model_name, obj.pk, user_id]
                 )
                 return redirect(url)
         elif request.method == 'POST' and 'submit_manage_group' in request.POST:
@@ -274,8 +270,8 @@ class GuardianManageView(GuardianCommonView):
             if group_form.is_valid():
                 group_id = group_form.cleaned_data['group'].id
                 url = reverse(
-                    '%s:%s_%s_permissions_manage_group' % info,
-                    args=[obj.pk, group_id]
+                    '{0.admin_site.name}:guardian_permissions_group'.format(self),
+                    args=[self.app_label, self.model_name, obj.pk, group_id]
                 )
                 return redirect(url)
         else:
@@ -300,16 +296,25 @@ class GuardianManageView(GuardianCommonView):
 
 class GuardianManageUserView(GuardianCommonView):
 
-    def obj_perms_manage_user_view(self, request, object_pk, user_id):
+    def __init__(self, *args, **kwargs):
+        self.user_id = kwargs['user_id']
+        super(GuardianManageUserView, self).__init__(*args, **kwargs)
+
+    def get(self, request, **kwargs):
+        return self.obj_perms_manage_user_view(request, **kwargs)
+
+    def obj_perms_manage_user_view(self, request, **kwargs):
         """
         Manages selected users' permissions for current object.
         """
-        if not self.admin_view.has_change_permission(request, None):
-            post_url = reverse('xadmin:index', current_app=self.admin_site.name)
+        current_app = self.admin_site.name
+
+        if not self.has_change_permission():
+            post_url = reverse('xadmin:index', current_app=current_app)
             return redirect(post_url)
 
-        user = get_object_or_404(get_user_model(), pk=user_id)
-        obj = get_object_or_404(self.get_queryset(request), pk=object_pk)
+        user = get_object_or_404(get_user_model(), pk=self.user_id)
+        obj = get_object_or_404(self.get_queryset(), pk=self.object_pk)
         form_class = self.get_obj_perms_manage_user_form(request)
         form = form_class(user, obj, request.POST or None)
 
@@ -317,41 +322,47 @@ class GuardianManageUserView(GuardianCommonView):
             form.save_obj_perms()
             msg = ugettext("Permissions saved.")
             messages.success(request, msg)
-            info = (
-                self.admin_site.name,
-                self.model._meta.app_label,
-                get_model_name(self.model)
-            )
             url = reverse(
-                '%s:%s_%s_permissions_manage_user' % info,
-                args=[obj.pk, user.pk]
+                '{0.admin_site.name}:guardian_permissions_user'.format(self),
+                args=[self.app_label, self.model_name, obj.pk, self.user_id]
             )
             return redirect(url)
 
         context = self.get_obj_perms_base_context(request, obj)
-        context['user_obj'] = user
+
         context['user_perms'] = get_user_perms(user, obj)
+        context['user_obj'] = user
         context['form'] = form
 
-        request.current_app = self.admin_site.name
+        request.current_app = current_app
 
-        if django.VERSION >= (1, 10):
-            return render(request, self.get_obj_perms_manage_user_template(), context)
+        return render(request, self.get_obj_perms_manage_user_template(), context)
 
-        return render_to_response(self.get_obj_perms_manage_user_template(), context, RequestContext(request))
+    def post(self, request, **kwargs):
+        return self.get(request, **kwargs)
 
 
 class GuardianManageGroupView(GuardianCommonView):
-    def obj_perms_manage_group_view(self, request, object_pk, group_id):
+
+    def __init__(self, *args, **kwargs):
+        self.group_id = kwargs['group_id']
+        super(GuardianManageGroupView, self).__init__(*args, **kwargs)
+
+    def get(self, request, **kwargs):
+        return self.obj_perms_manage_group_view(request, **kwargs)
+
+    def obj_perms_manage_group_view(self, request, **kwargs):
         """
         Manages selected groups' permissions for current object.
         """
-        if not self.admin_view.has_change_permission(request, None):
+        if not self.has_change_permission():
             post_url = reverse('xadmin:index', current_app=self.admin_site.name)
             return redirect(post_url)
 
-        group = get_object_or_404(Group, id=group_id)
-        obj = get_object_or_404(self.get_queryset(request), pk=object_pk)
+        group = get_object_or_404(Group, id=self.group_id)
+
+        obj = get_object_or_404(self.get_queryset(), pk=self.object_pk)
+
         form_class = self.get_obj_perms_manage_group_form(request)
         form = form_class(group, obj, request.POST or None)
 
@@ -359,14 +370,9 @@ class GuardianManageGroupView(GuardianCommonView):
             form.save_obj_perms()
             msg = ugettext("Permissions saved.")
             messages.success(request, msg)
-            info = (
-                self.admin_site.name,
-                self.model._meta.app_label,
-                get_model_name(self.model)
-            )
             url = reverse(
-                '%s:%s_%s_permissions_manage_group' % info,
-                args=[obj.pk, group.id]
+                '{0.admin_site.name}:guardian_permissions_group'.format(self),
+                args=[self.app_label, self.model_name, obj.pk, self.group_id]
             )
             return redirect(url)
 
@@ -377,31 +383,22 @@ class GuardianManageGroupView(GuardianCommonView):
 
         request.current_app = self.admin_site.name
 
-        if django.VERSION >= (1, 10):
-            return render(request, self.get_obj_perms_manage_group_template(), context)
+        return render(request, self.get_obj_perms_manage_group_template(), context)
 
-        return render_to_response(self.get_obj_perms_manage_group_template(), context, RequestContext(request))
+    def post(self, request, **kwargs):
+        return self.get(request, **kwargs)
 
 
-# """
-# Extends standard admin model urls with the following:
-#
-# - ``.../permissions/`` under ``app_mdodel_permissions`` url name (params: object_pk)
-# - ``.../permissions/user-manage/<user_id>/`` under ``app_model_permissions_manage_user`` url name (params: object_pk, user_pk)
-# - ``.../permissions/group-manage/<group_id>/`` under ``app_model_permissions_manage_group`` url name (params: object_pk, group_pk)
-#
-# .. note::
-#    ``...`` above are standard, instance detail url (i.e.
-#    ``/admin/flatpages/1/``)
+base_regex = r'^(?P<app_label>.+)/(?P<model_name>.+)/(?P<object_pk>\d+)'
 
-site.register_view(r'^(?P<app_label>.+)/(?P<model_name>.+)/(?P<object_pk>\d+)/permissions/$',
+site.register_view(base_regex + r'/permissions/$',
                    GuardianManageView,
                    'guardian_permissions')
 
-site.register_view(r'^(?P<object_pk>.+)/permissions/user-manage/(?P<user_id>\-?\d+)/$',
+site.register_view(base_regex + r'/permissions/user-manage/(?P<user_id>\-?\d+)/$',
                    GuardianManageUserView,
-                   'guardian_permissions_manage_user')
+                   'guardian_permissions_user')
 
-site.register_view(r'^(?P<object_pk>.+)/permissions/group-manage/(?P<group_id>\-?\d+)/$',
-                   GuardianManageUserView,
-                   'guardian_permissions_manage_group')
+site.register_view(base_regex + r'/permissions/group-manage/(?P<group_id>\-?\d+)/$',
+                   GuardianManageGroupView,
+                   'guardian_permissions_group')
