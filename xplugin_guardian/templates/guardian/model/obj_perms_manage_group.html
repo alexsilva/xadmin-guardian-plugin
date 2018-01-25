@@ -1,13 +1,21 @@
 {% extends base_template %}
+{% load i18n %}
+
+{% block nav_title %}
+    {% trans 'group' %}:<span class="label label-default">{{ group_obj }}</span>
+{% endblock %}
 
 {% block content %}
-    {{ group_perms }}
-    {{ group_obj }}
-
-    <form action="" class="form" method="post">{% csrf_token %}
-        <div class="form-group">
-        {{ form }}
-         </div>
+    <form class="exform" method="post">{% csrf_token %}
+        {% include 'guardian/includes/form.container.html' %}
+        <div class="form-actions well well-sm">
+            <button type="submit" class="default btn btn-primary" name="_save" data-loading-text="{% trans "Saving.." %}">
+                <i class="fa fa-save"></i> {% trans 'Save' %}
+            </button>
+        </div>
     </form>
+{% endblock %}
 
+{% block extrabody %}
+    {{ form.media }}
 {% endblock %}

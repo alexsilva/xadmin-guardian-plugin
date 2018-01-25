@@ -7,15 +7,8 @@
 
 {% block content %}
     <form class="exform" method="post">{% csrf_token %}
-        <div class="form-container row">
-            <div class="col-sm-12 form-horizontal">
-                <div class="panel panel-default fieldset">
-                    <div class="panel-body">
-                        {{ form }}
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% include 'guardian/includes/form.container.html' %}
+
         <div class="form-actions well well-sm">
             <button type="submit" class="default btn btn-primary" name="_save" data-loading-text="{% trans "Saving.." %}">
                 <i class="fa fa-save"></i> {% trans 'Save' %}

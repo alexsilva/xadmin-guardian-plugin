@@ -181,7 +181,7 @@ class GuardianCommonView(CommAdminView):
         Returns form class for group object permissions management.  By default
         :form:`AdminGroupObjectPermissionsForm` is returned.
         """
-        return AdminGroupObjectPermissionsForm
+        return forms.AdminGroupObjectPermissionsForm
 
     def has_view_permission(self, obj=None):
         view_codename = get_permission_codename('view', self.opts)
@@ -350,6 +350,12 @@ class GuardianManageGroupView(GuardianCommonView):
 
     def get(self, request, **kwargs):
         return self.obj_perms_manage_group_view(request, **kwargs)
+
+    @filter_hook
+    def get_media(self):
+        media = super(GuardianManageGroupView, self).get_media()
+        media += self.vendor('xadmin.page.form.js', 'xadmin.form.css')
+        return media
 
     def obj_perms_manage_group_view(self, request, **kwargs):
         """
