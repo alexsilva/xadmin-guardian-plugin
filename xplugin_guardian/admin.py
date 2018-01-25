@@ -7,8 +7,10 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_permission_codename
+from django.db import models
 from django.shortcuts import get_object_or_404, redirect, render_to_response, render
 from django.template import RequestContext
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin.utils import unquote
@@ -51,6 +53,8 @@ class GuardianPlugin(BaseAdminPlugin):
 
     guarded_model = False
 
+    permission_button_title = _("Object permissions")
+
     def init_request(self, *args, **kwargs):
         return self.guarded_model
 
@@ -67,6 +71,23 @@ class GuardianPlugin(BaseAdminPlugin):
             filters = {qs_key: self.request.user}
             qs = qs.filter(**filters)
         return qs
+
+    def get_context(self, context):
+        if isinstance(getattr(self.admin_view, 'org_obj', None), models.Model):  # is update view
+            context.setdefault('guardian', {'button': {
+                'title': self.permission_button_title,
+                'url': reverse('{0.admin_site.name}:guardian_permissions'.format(self),
+                               kwargs=dict(
+                                   app_label=self.opts.app_label,
+                                   model_name=self.opts.model_name,
+                                   object_pk=self.admin_view.org_obj.pk
+                               ))
+            }})
+        return context
+
+    def block_nav_btns(self, context, nodes, *args, **kwargs):
+        if isinstance(getattr(self.admin_view, 'org_obj', None), models.Model):  # is update view
+            return render_to_string("guardian/includes/permission_manage.html", context=context)
 
 
 class GuardianCommonView(CommAdminView):
@@ -361,7 +382,7 @@ class GuardianManageGroupView(GuardianCommonView):
 #    ``...`` above are standard, instance detail url (i.e.
 #    ``/admin/flatpages/1/``)
 
-site.register_view(r'^(?P<app_label>.+)/(?P<model_name>.+)/(?P<object_pk>.+)/permissions/$',
+site.register_view(r'^(?P<app_label>.+)/(?P<model_name>.+)/(?P<object_pk>\d+)/permissions/$',
                    GuardianManageView,
                    'guardian_permissions')
 
