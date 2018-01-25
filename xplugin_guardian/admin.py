@@ -235,13 +235,10 @@ class GuardianManageView(GuardianCommonView):
 
         users_perms = OrderedDict(
             sorted(
-                get_users_with_perms(obj, attach_perms=True,
-                                     with_group_users=False).items(),
-                key=lambda user: getattr(
-                    user[0], get_user_model().USERNAME_FIELD)
+                get_users_with_perms(obj, attach_perms=True, with_group_users=False).items(),
+                key=lambda user: getattr(user[0], get_user_model().USERNAME_FIELD)
             )
         )
-
         groups_perms = OrderedDict(
             sorted(
                 get_groups_with_perms(obj, attach_perms=True).items(),

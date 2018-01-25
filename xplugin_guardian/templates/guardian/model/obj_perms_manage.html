@@ -1,24 +1,81 @@
 {% extends base_template %}
+{% load i18n %}
 
 {% block content %}
-    {{ users_perms }}
-    {{ groups_perms }}
+    <table class="table table-bordered">
+        <tr>
+            <th>{% trans 'username' %}</th>
+            {% for perms in users_perms.values %}
+                {% for perm in perms %}
+                    <th>{% trans 'can '%}{{ perm }}</th>
+                {% endfor %}
+            {% endfor %}
+        </tr>
+        <tr>
+            {% for user, perms in users_perms.items %}
+                <td>{{ user }}</td>
+                {% for perm in perms  %}
+                    <td>{{ perm }}</td>
+                {% endfor %}
+            {% endfor %}
+        </tr>
+    </table>
 
-    <form action="" class="form" method="post">{% csrf_token %}
-        <div class="form-group">
-            {{ user_form }}
-            <input type="hidden" name="submit_manage_user" value="1"/>
+    <form class="exform" method="post">{% csrf_token %}
+        <input type="hidden" name="submit_manage_user" value="1"/>
+        <div class="form-container row">
+            <div class="col-sm-12 form-horizontal">
+                <div class="panel panel-default fieldset">
+                    <div class="panel-body">
+                        {{ user_form }}
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <button class="btn btn-success" type="submit">Send</button>
+        <div class="form-actions well well-sm">
+            <button type="submit" class="default btn btn-primary" name="_save" data-loading-text="{% trans "Saving.." %}">
+                <i class="fa fa-save"></i> {% trans 'Save' %}
+            </button>
+        </div>
     </form>
 
+    {% if groups_perms %}
+    <table class="table table-bordered">
+        <tr>
+            <th>{% trans 'group' %}</th>
+            {% for perms in groups_perms.values %}
+                {% for perm in perms %}
+                    <th>{% trans 'can '%}{{ perm }}</th>
+                {% endfor %}
+            {% endfor %}
+        </tr>
+        <tr>
+            {% for group, perms in groups_perms.items %}
+                <td>{{ group }}</td>
+                {% for perm in perms  %}
+                    <td>{{ perm }}</td>
+                {% endfor %}
+            {% endfor %}
+        </tr>
+    </table>
+    {% endif %}
 
-    <form action="" class="form" method="post">{% csrf_token %}
-         <div class="form-group">
-             {{ group_form }}
-            <input type="hidden" name="submit_manage_group" value="1"/>
-         </div>
-        <button class="btn btn-success" type="submit">Send</button>
+    <form class="exform" method="post">{% csrf_token %}
+        <input type="hidden" name="submit_manage_group" value="1"/>
+
+        <div class="form-container row">
+            <div class="col-sm-12 form-horizontal">
+                <div class="panel panel-default fieldset">
+                    <div class="panel-body">
+                        {{ group_form }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-actions well well-sm">
+            <button type="submit" class="default btn btn-primary" name="_save" data-loading-text="{% trans "Saving.." %}">
+                <i class="fa fa-save"></i> {% trans 'Save' %}
+            </button>
+        </div>
     </form>
 {% endblock %}
