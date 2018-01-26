@@ -39,6 +39,9 @@ from xadmin import site
 from . import forms
 
 
+User = get_user_model()
+
+
 class GuardianPlugin(BaseAdminPlugin):
     """
     Xadmin plugin
@@ -66,7 +69,6 @@ class GuardianPlugin(BaseAdminPlugin):
             filters = {self.user_owned_objects_field: self.request.user}
             qs = qs.filter(**filters)
         if self.user_can_access_owned_by_group_objects_only:
-            User = get_user_model()
             user_rel_name = User.groups.field.related_query_name()
             qs_key = '%s__%s' % (self.group_owned_objects_field, user_rel_name)
             filters = {qs_key: self.request.user}
@@ -236,7 +238,7 @@ class GuardianManageView(GuardianCommonView):
         users_perms = OrderedDict(
             sorted(
                 get_users_with_perms(obj, attach_perms=True, with_group_users=False).items(),
-                key=lambda user: getattr(user[0], get_user_model().USERNAME_FIELD)
+                key=lambda user: getattr(user[0], User.USERNAME_FIELD)
             )
         )
         groups_perms = OrderedDict(
@@ -313,7 +315,7 @@ class GuardianManageUserView(GuardianCommonView):
             post_url = reverse('xadmin:index', current_app=current_app)
             return redirect(post_url)
 
-        user = get_object_or_404(get_user_model(), pk=self.user_id)
+        user = get_object_or_404(User, pk=self.user_id)
         obj = get_object_or_404(self.get_queryset(), pk=self.object_pk)
         form_class = self.get_obj_perms_manage_user_form(request)
         form = form_class(user, obj, request.POST or None)
