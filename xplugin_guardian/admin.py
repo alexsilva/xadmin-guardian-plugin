@@ -2,28 +2,22 @@ from __future__ import unicode_literals
 
 from collections import OrderedDict
 
-import django
 from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.admin.utils import unquote
 from django.contrib.auth import get_permission_codename
 from django.db import models
-from django.shortcuts import get_object_or_404, redirect, render_to_response, render
-from django.template import RequestContext
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.admin.utils import unquote
 from guardian.admin import (
-    AdminGroupObjectPermissionsForm,
     UserManage,
-    GroupManage,
-    AdminUserObjectPermissionsForm
+    GroupManage
 )
 from guardian.compat import (
-    get_model_name,
     get_user_model,
-    url,
     reverse
 )
 from guardian.models import Group
@@ -34,10 +28,10 @@ from guardian.shortcuts import (
     get_user_perms,
     get_users_with_perms
 )
-from xadmin.views import BaseAdminPlugin, CommAdminView, filter_hook
 from xadmin import site
-from . import forms
+from xadmin.views import BaseAdminPlugin, CommAdminView, filter_hook
 
+from . import forms
 
 User = get_user_model()
 
