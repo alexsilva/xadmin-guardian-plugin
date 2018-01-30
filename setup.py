@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-    name='xadmin-plugin-guardian',
+    name='xadmin-guardian-plugin',
     version='1.0.0',
     include_package_data=True,
     install_requires=[

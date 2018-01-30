@@ -1,4 +1,4 @@
-# xadmin.plugin.guardian
+# xadmin-guardian-plugin
 Plugin that implement the guardian support in xadmin.
 
 
