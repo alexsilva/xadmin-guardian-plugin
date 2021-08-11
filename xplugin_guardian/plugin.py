@@ -231,7 +231,11 @@ class GuardianManageView(GuardianCommonView):
 
         if self.request_method == 'post' and 'submit_manage_user' in request.POST:
             user_form = self.get_obj_perms_user_select_form(request)(request.POST)
-            group_form = self.get_obj_perms_group_select_form(request)(request.POST)
+            group_form = self.get_obj_perms_group_select_form(request)
+
+            form = group_form(request.POST)
+            if form.is_valid():
+                group_form = group_form()
 
             if user_form.is_valid():
                 user_id = user_form.cleaned_data['user'].pk
@@ -241,9 +245,13 @@ class GuardianManageView(GuardianCommonView):
                                         obj.pk,
                                         user_id)
                 return redirect(url)
-        elif request.method == 'POST' and 'submit_manage_group' in request.POST:
-            user_form = self.get_obj_perms_user_select_form(request)(request.POST)
+        elif self.request_method == 'post' and 'submit_manage_group' in request.POST:
+            user_form = self.get_obj_perms_user_select_form(request)
             group_form = self.get_obj_perms_group_select_form(request)(request.POST)
+
+            form = user_form(request.POST)
+            if form.is_valid():
+                user_form = user_form()
 
             if group_form.is_valid():
                 group_id = group_form.cleaned_data['group'].id
