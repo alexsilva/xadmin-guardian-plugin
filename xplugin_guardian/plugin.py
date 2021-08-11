@@ -1,6 +1,7 @@
 # coding=utf-8
 from collections import OrderedDict
 
+from crispy_forms.helper import FormHelper
 from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
@@ -255,6 +256,18 @@ class GuardianManageView(GuardianCommonView):
         else:
             user_form = self.get_obj_perms_user_select_form(request)()
             group_form = self.get_obj_perms_group_select_form(request)()
+
+        helper = FormHelper()
+        helper.disable_csrf = True
+        helper.form_tag = False
+        helper.html5_required = True
+        helper.label_class = 'font-weight-bold'
+        helper.field_class = 'controls'
+        helper.include_media = False
+        helper.use_custom_control = False
+
+        user_form.helper = helper
+        group_form.helper = helper
 
         context = self.get_obj_perms_context(obj)
 
