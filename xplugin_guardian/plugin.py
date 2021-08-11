@@ -187,6 +187,17 @@ class GuardianCommonView(CommAdminView):
         codename = get_permission_codename('delete', self.opts)
         return ('delete' not in self.remove_permissions) and self.user.has_perm('%s.%s' % (self.app_label, codename))
 
+    def get_form_helper(self):
+        helper = FormHelper()
+        helper.disable_csrf = True
+        helper.form_tag = False
+        helper.html5_required = True
+        helper.label_class = 'font-weight-bold'
+        helper.field_class = 'controls'
+        helper.include_media = False
+        helper.use_custom_control = False
+        return helper
+
 
 class GuardianManageView(GuardianCommonView):
 
@@ -262,15 +273,7 @@ class GuardianManageView(GuardianCommonView):
             user_form = self.get_obj_perms_user_select_form(request)()
             group_form = self.get_obj_perms_group_select_form(request)()
 
-        helper = FormHelper()
-        helper.disable_csrf = True
-        helper.form_tag = False
-        helper.html5_required = True
-        helper.label_class = 'font-weight-bold'
-        helper.field_class = 'controls'
-        helper.include_media = False
-        helper.use_custom_control = False
-
+        helper = self.get_form_helper()
         user_form.helper = helper
         group_form.helper = helper
 
@@ -318,13 +321,9 @@ class GuardianManageUserView(GuardianCommonView):
             form.save_obj_perms()
             msg = ugettext("Permissions saved.")
             messages.success(request, msg)
-            url = self.get_admin_url("guardian_permissions_user",
-                                    self.app_label,
-                                    self.model_name,
-                                    obj.pk,
-                                    self.user_id)
-            return redirect(url)
+            return redirect(self.get_model_url(self.model, "change", obj.pk))
 
+        form.helper = self.get_form_helper()
         context = self.get_obj_perms_context(obj)
         context['media'] += form.media
 
@@ -373,12 +372,9 @@ class GuardianManageGroupView(GuardianCommonView):
             form.save_obj_perms()
             msg = ugettext("Permissions saved.")
             messages.success(request, msg)
-            url = self.get_admin_url("guardian_permissions_group",
-                                    self.app_label,
-                                    self.model_name, obj.pk,
-                                    self.group_id)
-            return redirect(url)
+            return redirect(self.get_model_url(self.model, "change", obj.pk))
 
+        form.helper = self.get_form_helper()
         context = self.get_obj_perms_context(obj)
         context['media'] += form.media
 
