@@ -7,6 +7,7 @@
 {% endblock %}
 
 {% block content %}
+    {% if users_perms %}
     <table class="table table-bordered">
         <tr>
             <th>{% trans 'username' %}</th>
@@ -25,6 +26,7 @@
             {% endfor %}
         </tr>
     </table>
+    {% endif %}
 
     <form class="exform" method="post">{% csrf_token %}
         <input type="hidden" name="submit_manage_user" value="1"/>
