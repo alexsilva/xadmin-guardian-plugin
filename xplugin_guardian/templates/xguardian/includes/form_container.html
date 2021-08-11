@@ -4,9 +4,11 @@
 
 <form class="exform" method="post">{% csrf_token %}
     {% crispy form %}
-    <div class="form-actions">
-        <button type="submit" class="btn btn-primary" name="_save" data-loading-text="{% trans 'Saving..' %}">
-            <i class="fa fa-save"></i> {% trans 'Save' %}
-        </button>
+    <div class="card">
+        <div class="form-actions card-body">
+            <button type="submit" class="btn btn-primary" name="_save" data-loading-text="{% trans 'Saving..' %}">
+                <i class="fa fa-save"></i> {% trans 'Save' %}
+            </button>
+        </div>
     </div>
 </form>
