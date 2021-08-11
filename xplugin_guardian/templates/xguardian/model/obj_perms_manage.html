@@ -2,6 +2,10 @@
 {% load i18n %}
 {% load crispy_forms_tags %}
 
+{% block nav_title %}
+  <i class="fa fa-lock"></i> {{title}}
+{% endblock %}
+
 {% block content %}
     <table class="table table-bordered">
         <tr>
