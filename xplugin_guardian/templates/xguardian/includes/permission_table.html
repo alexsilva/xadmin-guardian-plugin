@@ -1,22 +1,24 @@
 {% load i18n %}
-<table class="table table-sm table-bordered">
-     <caption>{{ caption }}</caption>
-    <thead class="thead-light">
+<div class="table-responsive">
+    <table class="table table-sm table-bordered">
+         <caption>{{ caption }}</caption>
+        <thead class="thead-light">
+            <tr>
+                <th>{{ title }}</th>
+                {% for perms in permissions.values %}
+                    {% for codename in perms %}
+                        <th scope="col">{% trans 'can ' %}{{ codename }}</th>
+                    {% endfor %}
+                {% endfor %}
+            </tr>
+        </thead>
         <tr>
-            <th>{{ title }}</th>
-            {% for perms in permissions.values %}
+            {% for user, perms in permissions.items %}
+                <td>{{ user }}</td>
                 {% for codename in perms %}
-                    <th scope="col">{% trans 'can ' %}{{ codename }}</th>
+                    <td scope="row">{{ codename }}</td>
                 {% endfor %}
             {% endfor %}
         </tr>
-    </thead>
-    <tr>
-        {% for user, perms in permissions.items %}
-            <td>{{ user }}</td>
-            {% for codename in perms %}
-                <td scope="row">{{ codename }}</td>
-            {% endfor %}
-        {% endfor %}
-    </tr>
-</table>
+    </table>
+</div>
