@@ -7,7 +7,7 @@
 
 {% block content %}
     <form class="exform" method="post">{% csrf_token %}
-        {% include 'xguardian/includes/form.container.html' %}
+        {% include 'xguardian/includes/form_container.html' %}
         <div class="form-actions well well-sm">
             <button type="submit" class="default btn btn-primary" name="_save" data-loading-text="{% trans "Saving.." %}">
                 <i class="fa fa-save"></i> {% trans 'Save' %}
