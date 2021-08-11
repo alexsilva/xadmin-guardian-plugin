@@ -108,14 +108,10 @@ class GuardianCommonView(CommAdminView):
         context = self.get_context()
         context.update({
             'title': _("Object permissions"),
-            'base_template': self.base_template,
-            'menu_template': self.menu_template,
-            'adminform': {'model_admin': self},
             'media': self.media,
             'object': obj,
             'opts': self.opts,
             'app_label': self.app_label,
-            'original': str(obj),
             'has_change_permission': self.has_change_permission(obj),
             'model_perms': get_perms_for_model(obj),
         })
