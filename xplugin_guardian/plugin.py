@@ -369,7 +369,7 @@ class GuardianManageGroupView(GuardianCommonView):
         form_class = self.get_obj_perms_manage_group_form(request)
         form = form_class(group, obj, request.POST or None)
 
-        if request.method == 'POST' and form.is_valid():
+        if self.request_method == 'post' and form.is_valid():
             form.save_obj_perms()
             msg = ugettext("Permissions saved.")
             messages.success(request, msg)
