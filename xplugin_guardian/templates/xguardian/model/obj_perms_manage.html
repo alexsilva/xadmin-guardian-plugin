@@ -27,7 +27,7 @@
         {% crispy user_form %}
         <div class="form-actions">
             <button type="submit" class="default btn btn-primary" name="_find" data-loading-text="{% trans 'Saving..' %}">
-                <i class="fa fa-save"></i> {% trans 'Save' %}
+                <i class="fa fa-search"></i> {% trans 'Search' %}
             </button>
         </div>
     </form>
@@ -57,8 +57,8 @@
         <input type="hidden" name="submit_manage_group" value="1"/>
         {% crispy group_form %}
         <div class="form-actions clearfix">
-            <button type="submit" class="default btn btn-primary" name="_find" data-loading-text="{% trans 'Saving..' %}">
-                <i class="fa fa-save"></i> {% trans 'Save' %}
+            <button type="submit" class="default btn btn-secondary" name="_find" data-loading-text="{% trans 'Saving..' %}">
+                <i class="fa fa-search"></i> {% trans 'Search' %}
             </button>
         </div>
     </form>
