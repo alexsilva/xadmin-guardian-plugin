@@ -326,6 +326,7 @@ class GuardianManageUserView(GuardianCommonView):
             return redirect(url)
 
         context = self.get_obj_perms_context(obj)
+        context['media'] += form.media
 
         context['user_perms'] = get_user_perms(user, obj)
         context['user_obj'] = user
@@ -379,6 +380,8 @@ class GuardianManageGroupView(GuardianCommonView):
             return redirect(url)
 
         context = self.get_obj_perms_context(obj)
+        context['media'] += form.media
+
         context['group_obj'] = group
         context['group_perms'] = get_group_perms(group, obj)
         context['form'] = form
