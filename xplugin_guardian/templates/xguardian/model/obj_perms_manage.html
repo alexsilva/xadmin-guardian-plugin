@@ -8,24 +8,8 @@
 
 {% block content %}
     {% if users_perms %}
-    <table class="table table-bordered">
-        <tr>
-            <th>{% trans 'username' %}</th>
-            {% for perms in users_perms.values %}
-                {% for perm in perms %}
-                    <th>{% trans 'can '%}{{ perm }}</th>
-                {% endfor %}
-            {% endfor %}
-        </tr>
-        <tr>
-            {% for user, perms in users_perms.items %}
-                <td>{{ user }}</td>
-                {% for perm in perms  %}
-                    <td>{{ perm }}</td>
-                {% endfor %}
-            {% endfor %}
-        </tr>
-    </table>
+    {% trans 'users' as user_title %}
+    {% include "xguardian/includes/permission_table.html" with title=user_title permissions=users_perms only %}
     {% endif %}
 
     <form class="exform" method="post">{% csrf_token %}
@@ -39,24 +23,8 @@
     </form>
 
     {% if groups_perms %}
-    <table class="table table-bordered">
-        <tr>
-            <th>{% trans 'group' %}</th>
-            {% for perms in groups_perms.values %}
-                {% for perm in perms %}
-                    <th>{% trans 'can '%}{{ perm }}</th>
-                {% endfor %}
-            {% endfor %}
-        </tr>
-        <tr>
-            {% for group, perms in groups_perms.items %}
-                <td>{{ group }}</td>
-                {% for perm in perms  %}
-                    <td>{{ perm }}</td>
-                {% endfor %}
-            {% endfor %}
-        </tr>
-    </table>
+        {% trans 'groups' as groups_title %}
+        {% include "xguardian/includes/permission_table.html" with title=groups_title permissions=groups_perms only %}
     {% endif %}
 
     <form class="exform" method="post">{% csrf_token %}

@@ -1,0 +1,21 @@
+{% load i18n %}
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>{{ title }}</th>
+            {% for perms in permissions.values %}
+                {% for codename in perms %}
+                    <th>{% trans 'can ' %}{{ codename }}</th>
+                {% endfor %}
+            {% endfor %}
+        </tr>
+    </thead>
+    <tr>
+        {% for user, perms in permissions.items %}
+            <td>{{ user }}</td>
+            {% for codename in perms %}
+                <td>{{ codename }}</td>
+            {% endfor %}
+        {% endfor %}
+    </tr>
+</table>
