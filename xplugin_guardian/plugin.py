@@ -40,21 +40,18 @@ class GuardianPlugin(BaseAdminPlugin):
     """
     Xadmin plugin
     """
+    guardian_protected = False
 
     user_can_access_owned_objects_only = False
-
     user_owned_objects_field = 'user'
 
     user_can_access_owned_by_group_objects_only = False
-
     group_owned_objects_field = 'group'
-
-    guarded_model = False
 
     permission_button_title = _("Object permissions")
 
     def init_request(self, *args, **kwargs):
-        return self.guarded_model
+        return self.guardian_protected
 
     def queryset(self, qs):
         if self.request.user.is_superuser:
