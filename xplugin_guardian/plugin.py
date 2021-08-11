@@ -34,7 +34,8 @@ User = get_user_model()
 
 class GuardianPlugin(BaseAdminPlugin):
     """
-    Xadmin plugin
+    Plugin that adds a button to an object's editing screen and allows you to
+    view existing permissions or add/change those permissions.
     """
     guardian_permissions = False
 
