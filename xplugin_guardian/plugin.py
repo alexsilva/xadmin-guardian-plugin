@@ -1,5 +1,4 @@
-from __future__ import unicode_literals
-
+# coding=utf-8
 from collections import OrderedDict
 
 from django.apps import apps
