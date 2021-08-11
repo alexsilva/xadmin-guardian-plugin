@@ -279,8 +279,12 @@ class GuardianManageView(GuardianCommonView):
 
         context = self.get_obj_perms_context(obj)
 
-        users_perms_max = max([len(perms) for user, perms in users_perms.items()])
-        groups_perms_max = max([len(perms) for user, perms in groups_perms.items()])
+        def get_max_length(permissions):
+            counters = [len(perms) for user, perms in permissions.items()]
+            return len(counters) and max(counters)
+
+        users_perms_max = get_max_length(users_perms)
+        groups_perms_max = get_max_length(groups_perms)
 
         context['permissions'] = {
             'user': {
