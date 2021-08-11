@@ -85,13 +85,12 @@ class GuardianCommonView(CommAdminView):
 
     remove_permissions = []
 
-    def __init__(self, *args, **kwargs):
+    def init_request(self, *args, **kwargs):
         self.app_label = kwargs['app_label']
         self.model_name = kwargs['model_name']
         self.object_pk = kwargs['object_pk']
         self.model = self.get_model(self.app_label, self.model_name)
         self.opts = self.model._meta
-        super(GuardianCommonView, self).__init__(*args, **kwargs)
 
     @staticmethod
     def get_model(app_label, model_name):
