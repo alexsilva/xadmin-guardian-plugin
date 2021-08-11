@@ -50,15 +50,15 @@ class GuardianPlugin(BaseAdminPlugin):
         return self.guardian_permissions
 
     def queryset(self, qs):
-        if self.request.user.is_superuser:
+        if self.user.is_superuser:
             return qs
         if self.guardian_user_can_access_owned_objects_only:
-            filters = {self.guardian_user_owned_objects_field: self.request.user}
+            filters = {self.guardian_user_owned_objects_field: self.user}
             qs = qs.filter(**filters)
         if self.guardian_user_can_access_owned_by_group_objects_only:
             user_rel_name = User.groups.field.related_query_name()
             qs_key = '%s__%s' % (self.guardian_group_owned_objects_field, user_rel_name)
-            filters = {qs_key: self.request.user}
+            filters = {qs_key: self.user}
             qs = qs.filter(**filters)
         return qs
 
