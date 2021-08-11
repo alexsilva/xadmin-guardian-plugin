@@ -388,6 +388,9 @@ class GuardianManageGroupView(GuardianCommonView):
 
 
 def register_views(admin_site):
+    if getattr(admin_site, "__guardian_registered", False):
+        return
+
     regex = r'^(?P<app_label>.+)/(?P<model_name>.+)/(?P<object_pk>\d+)'
 
     admin_site.register_view(regex + r'/permissions/$',
@@ -402,5 +405,5 @@ def register_views(admin_site):
                              GuardianManageGroupView,
                              'guardian_permissions_group')
 
-
-register_views(site)
+    admin_site.register_plugin(GuardianPlugin, ModelFormAdminView)
+    admin_site.__guardian_registered = True
