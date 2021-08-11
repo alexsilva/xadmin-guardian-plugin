@@ -38,13 +38,13 @@ class GuardianPlugin(BaseAdminPlugin):
     """
     guardian_permissions = False
 
-    user_can_access_owned_objects_only = False
-    user_owned_objects_field = 'user'
+    guardian_user_owned_objects_field = 'user'
+    guardian_group_owned_objects_field = 'group'
 
-    user_can_access_owned_by_group_objects_only = False
-    group_owned_objects_field = 'group'
+    guardian_user_can_access_owned_objects_only = False
+    guardian_user_can_access_owned_by_group_objects_only = False
 
-    permission_button_title = _("Object permissions")
+    guardian_permission_button_title = _("Object permissions")
 
     def init_request(self, *args, **kwargs):
         return self.guardian_permissions
@@ -52,12 +52,12 @@ class GuardianPlugin(BaseAdminPlugin):
     def queryset(self, qs):
         if self.request.user.is_superuser:
             return qs
-        if self.user_can_access_owned_objects_only:
-            filters = {self.user_owned_objects_field: self.request.user}
+        if self.guardian_user_can_access_owned_objects_only:
+            filters = {self.guardian_user_owned_objects_field: self.request.user}
             qs = qs.filter(**filters)
-        if self.user_can_access_owned_by_group_objects_only:
+        if self.guardian_user_can_access_owned_by_group_objects_only:
             user_rel_name = User.groups.field.related_query_name()
-            qs_key = '%s__%s' % (self.group_owned_objects_field, user_rel_name)
+            qs_key = '%s__%s' % (self.guardian_group_owned_objects_field, user_rel_name)
             filters = {qs_key: self.request.user}
             qs = qs.filter(**filters)
         return qs
@@ -65,7 +65,7 @@ class GuardianPlugin(BaseAdminPlugin):
     def get_context(self, context):
         if isinstance(getattr(self.admin_view, 'org_obj', None), models.Model):  # is update view
             context.setdefault('guardian', {'button': {
-                'title': self.permission_button_title,
+                'title': self.guardian_permission_button_title,
                 'url': self.get_admin_url("guardian_permissions",
                                         app_label=self.opts.app_label,
                                         model_name=self.opts.model_name,
