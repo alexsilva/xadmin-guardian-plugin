@@ -2,10 +2,16 @@
 Plugin that implement the guardian support in xadmin.
 
 
+## Requirements
+Python 3
+
+Django 2+
+
+Xadmin `https://github.com/alexsilva/django-xadmin` branch `bs4_dj2`
 
 ## Install
 
-python -m pip install git+https://github.com/alexsilva/xadmin.plugin.guardian.git
+python -m pip install git+https://github.com/alexsilva/xadmin.plugin.guardian.git@bs4_dj2
 
 
 ## Add to installed apps:
@@ -24,18 +30,16 @@ from xadmin.views import ModelAdminView
 from xadmin.sites import site
 
 # plugin registry
-from xplugin_guardian.admin import GuardianPlugin
+import xplugin_guardian.plugin
 
-
-# displays a button in the view when editing a model.
-site.register_plugin(GuardianPlugin, ModelAdminView)
+# register views
+xplugin_guardian.plugin.register_views(site)
 
 
 # Activate the plugin in this view (guarded_model = True)
+class MyModelAdmin:
+    guardian_permissions = True   # protected by guardian
 
-class MyModelAdmin(object):
-    guarded_model = True   # protected by guardian
-    
 
 # Replace MyModel with your model
 
