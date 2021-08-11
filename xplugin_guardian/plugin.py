@@ -100,7 +100,7 @@ class GuardianCommonView(CommAdminView):
     def get_queryset(self):
         return self.model.objects.all()
 
-    def get_obj_perms_base_context(self, request, obj):
+    def get_obj_perms_context(self, obj):
         """
         Returns context dictionary with common admin and object permissions related content.
         """
@@ -114,7 +114,7 @@ class GuardianCommonView(CommAdminView):
             'object': obj,
             'opts': self.opts,
             'app_label': self.app_label,
-            'original': hasattr(obj, '__unicode__') and obj.__unicode__() or str(obj),
+            'original': str(obj),
             'has_change_permission': self.has_change_permission(obj),
             'model_perms': get_perms_for_model(obj),
         })
@@ -256,7 +256,7 @@ class GuardianManageView(GuardianCommonView):
             user_form = self.get_obj_perms_user_select_form(request)()
             group_form = self.get_obj_perms_group_select_form(request)()
 
-        context = self.get_obj_perms_base_context(request, obj)
+        context = self.get_obj_perms_context(obj)
 
         context['users_perms'] = users_perms
         context['groups_perms'] = groups_perms
@@ -307,7 +307,7 @@ class GuardianManageUserView(GuardianCommonView):
                                     self.user_id)
             return redirect(url)
 
-        context = self.get_obj_perms_base_context(request, obj)
+        context = self.get_obj_perms_context(obj)
 
         context['user_perms'] = get_user_perms(user, obj)
         context['user_obj'] = user
@@ -360,7 +360,7 @@ class GuardianManageGroupView(GuardianCommonView):
                                     self.group_id)
             return redirect(url)
 
-        context = self.get_obj_perms_base_context(request, obj)
+        context = self.get_obj_perms_context(obj)
         context['group_obj'] = group
         context['group_perms'] = get_group_perms(group, obj)
         context['form'] = form
