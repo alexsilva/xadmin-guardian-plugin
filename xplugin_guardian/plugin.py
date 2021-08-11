@@ -271,9 +271,9 @@ class GuardianManageView(GuardianCommonView):
 
 class GuardianManageUserView(GuardianCommonView):
 
-    def __init__(self, *args, **kwargs):
+    def init_request(self, *args, **kwargs):
+        super().init_request(*args, **kwargs)
         self.user_id = kwargs['user_id']
-        super(GuardianManageUserView, self).__init__(*args, **kwargs)
 
     def get(self, request, **kwargs):
         return self.obj_perms_manage_user_view(request, **kwargs)
@@ -322,9 +322,9 @@ class GuardianManageUserView(GuardianCommonView):
 
 class GuardianManageGroupView(GuardianCommonView):
 
-    def __init__(self, *args, **kwargs):
+    def init_request(self, *args, **kwargs):
+        super().init_request(*args, **kwargs)
         self.group_id = kwargs['group_id']
-        super(GuardianManageGroupView, self).__init__(*args, **kwargs)
 
     def get(self, request, **kwargs):
         return self.obj_perms_manage_group_view(request, **kwargs)
