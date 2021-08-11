@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
+import django.forms as django_forms
 from guardian.admin import (
     UserManage,
     GroupManage
@@ -196,7 +197,7 @@ class GuardianManageView(GuardianCommonView):
 
     def get_media(self):
         media = super(GuardianManageView, self).get_media()
-        media.add_js((
+        media += django_forms.Media(js=(
             settings.STATIC_URL + "xguardian/js/perms.manage.form.js",
         ))
         return media
