@@ -26,7 +26,7 @@ from guardian.shortcuts import (
     get_users_with_perms
 )
 from xadmin.plugins.utils import get_context_dict
-from xadmin.views import BaseAdminPlugin, CommAdminView, filter_hook, ModelFormAdminView
+from xadmin.views import BaseAdminPlugin, CommAdminView, ListAdminView, filter_hook, ModelFormAdminView
 from xplugin_guardian import forms
 
 User = get_user_model()
@@ -407,4 +407,5 @@ def register_views(admin_site):
                              'guardian_permissions_group')
 
     admin_site.register_plugin(GuardianPlugin, ModelFormAdminView)
+    admin_site.register_plugin(GuardianPlugin, ListAdminView)
     admin_site.__guardian_registered = True
