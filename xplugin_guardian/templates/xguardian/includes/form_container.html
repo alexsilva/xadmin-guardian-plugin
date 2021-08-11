@@ -1,9 +1,12 @@
-<div class="form-container row">
-    <div class="col-sm-12 form-horizontal">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                {{ form }}
-            </div>
-        </div>
+{% load crispy_forms_tags %}
+{% load i18n %}
+{% crispy form %}
+
+<form class="exform" method="post">{% csrf_token %}
+    {% crispy form %}
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary" name="_save" data-loading-text="{% trans 'Saving..' %}">
+            <i class="fa fa-save"></i> {% trans 'Save' %}
+        </button>
     </div>
-</div>
+</form>
