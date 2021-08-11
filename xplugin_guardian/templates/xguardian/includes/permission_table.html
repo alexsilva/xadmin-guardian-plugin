@@ -1,24 +1,27 @@
 {% load i18n %}
+{% load xguardian %}
 <div class="table-responsive">
     <table class="table table-sm table-bordered">
-        <caption>{{ caption }}</caption>
+        <caption>{{ permission.caption }}</caption>
         <thead class="thead-light">
-        <tr>
-            <th>{{ title }}</th>
-            {% for perms in permissions.values %}
-                {% for codename in perms %}
-                    <th scope="col">{% trans 'can ' %}{{ codename }}</th>
-                {% endfor %}
-            {% endfor %}
-        </tr>
+            <tr>
+                <th scope="col" colspan="{{ permission.max }}">{{ permission.title }}</th>
+            </tr>
         </thead>
-        <tr>
-            {% for user, perms in permissions.items %}
-                <td>{{ user }}</td>
+
+        <tbody>
+        {% for obj, perms in permission.data.items %}
+            <tr>
+                <th scope="row" class="text-truncate" style="max-width: 150px;" title="{{ obj }}">{{ obj }}</th>
                 {% for codename in perms %}
-                    <td scope="row">{{ codename }}</td>
+                    <td>{{ codename }}</td>
                 {% endfor %}
-            {% endfor %}
-        </tr>
+                {% rows_range perms|length permission.max as rows %}
+                {% for index in rows %}
+                    <td>{{ codename }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
     </table>
 </div>

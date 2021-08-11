@@ -279,11 +279,25 @@ class GuardianManageView(GuardianCommonView):
 
         context = self.get_obj_perms_context(obj)
 
-        context['users_perms'] = users_perms
-        context['groups_perms'] = groups_perms
-        context['user_form'] = user_form
-        context['group_form'] = group_form
+        users_perms_max = max([len(perms) for user, perms in users_perms.items()])
+        groups_perms_max = max([len(perms) for user, perms in groups_perms.items()])
 
+        context['permissions'] = {
+            'user': {
+                'title': _('user'),
+                'caption': _('users'),
+                'data': users_perms,
+                'max': users_perms_max + 1,
+                'form': user_form
+            },
+            'groups': {
+                'title': _('group'),
+                'caption': _('groups'),
+                'data': groups_perms,
+                'max': groups_perms_max + 1,
+                'form': group_form
+            }
+        }
         return render(request, self.get_obj_perms_manage_template(), context)
 
     def post(self, request, **kwargs):

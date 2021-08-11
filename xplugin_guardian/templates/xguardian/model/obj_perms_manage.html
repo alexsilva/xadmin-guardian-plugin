@@ -9,15 +9,13 @@
 {% block content %}
     <div class="card">
         <div class="card-body">
-            {% if users_perms %}
-                {% trans 'user' as user_title %}
-                {% trans 'users' as user_caption %}
-                {% include "xguardian/includes/permission_table.html" with caption=user_caption title=user_title permissions=users_perms only %}
+            {% if permissions.user.data %}
+                {% include "xguardian/includes/permission_table.html" with permission=permissions.user only %}
             {% endif %}
 
             <form class="exform" method="post">{% csrf_token %}
                 <input type="hidden" name="submit_manage_user" value="1"/>
-                {% crispy user_form %}
+                {% crispy permissions.user.form %}
                 <div class="clearfix">
                     <button type="submit" class="default btn btn-primary" name="_search">
                         <i class="fa fa-search"></i> {% trans 'Search' %}
@@ -29,15 +27,13 @@
 
     <div class="card mt-1">
         <div class="card-body">
-            {% if groups_perms %}
-                {% trans 'group' as groups_title %}
-                {% trans 'groups' as group_caption %}
-                {% include "xguardian/includes/permission_table.html" with caption=group_caption title=groups_title permissions=groups_perms only %}
+            {% if permissions.groups.data %}
+                {% include "xguardian/includes/permission_table.html" with permission=permissions.groups only %}
             {% endif %}
 
             <form class="exform" method="post">{% csrf_token %}
                 <input type="hidden" name="submit_manage_group" value="1"/>
-                {% crispy group_form %}
+                {% crispy permissions.groups.form %}
                 <div class="clearfix">
                     <button type="submit" class="default btn btn-secondary" name="_search">
                         <i class="fa fa-search"></i> {% trans 'Search' %}
