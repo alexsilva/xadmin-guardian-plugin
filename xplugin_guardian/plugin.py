@@ -313,7 +313,21 @@ class GuardianManageView(GuardianCommonView):
         return self.get(request, **kwargs)
 
 
-class GuardianManageUserView(GuardianCommonView):
+class GuardianManagerCommonView(GuardianCommonView):
+    @filter_hook
+    def get_media(self):
+        media = super().get_media()
+        media += self.vendor('xadmin.page.form.js', 'xadmin.form.css')
+        return media
+
+    def post_response(self, obj, form):
+        form.save_obj_perms()
+        msg = ugettext("Permissions saved.")
+        messages.success(self.request, msg)
+        return redirect(self.get_model_url(self.model, "change", obj.pk))
+
+
+class GuardianManageUserView(GuardianManagerCommonView):
 
     def init_request(self, *args, **kwargs):
         super().init_request(*args, **kwargs)
@@ -321,12 +335,6 @@ class GuardianManageUserView(GuardianCommonView):
 
     def get(self, request, **kwargs):
         return self.obj_perms_manage_user_view(request, **kwargs)
-
-    @filter_hook
-    def get_media(self):
-        media = super(GuardianManageUserView, self).get_media()
-        media += self.vendor('xadmin.page.form.js', 'xadmin.form.css')
-        return media
 
     def obj_perms_manage_user_view(self, request, **kwargs):
         """
@@ -341,10 +349,7 @@ class GuardianManageUserView(GuardianCommonView):
         form = form_class(user, obj, request.POST or None)
 
         if self.request_method == 'post' and form.is_valid():
-            form.save_obj_perms()
-            msg = ugettext("Permissions saved.")
-            messages.success(request, msg)
-            return redirect(self.get_model_url(self.model, "change", obj.pk))
+            return self.post_response(obj, form)
 
         form.helper = self.get_form_helper()
         context = self.get_obj_perms_context(obj)
@@ -361,7 +366,7 @@ class GuardianManageUserView(GuardianCommonView):
         return self.get(request, **kwargs)
 
 
-class GuardianManageGroupView(GuardianCommonView):
+class GuardianManageGroupView(GuardianManagerCommonView):
 
     def init_request(self, *args, **kwargs):
         super().init_request(*args, **kwargs)
@@ -369,12 +374,6 @@ class GuardianManageGroupView(GuardianCommonView):
 
     def get(self, request, **kwargs):
         return self.obj_perms_manage_group_view(request, **kwargs)
-
-    @filter_hook
-    def get_media(self):
-        media = super(GuardianManageGroupView, self).get_media()
-        media += self.vendor('xadmin.page.form.js', 'xadmin.form.css')
-        return media
 
     def obj_perms_manage_group_view(self, request, **kwargs):
         """
@@ -392,10 +391,7 @@ class GuardianManageGroupView(GuardianCommonView):
         form = form_class(group, obj, request.POST or None)
 
         if self.request_method == 'post' and form.is_valid():
-            form.save_obj_perms()
-            msg = ugettext("Permissions saved.")
-            messages.success(request, msg)
-            return redirect(self.get_model_url(self.model, "change", obj.pk))
+            return self.post_response(obj, form)
 
         form.helper = self.get_form_helper()
         context = self.get_obj_perms_context(obj)
