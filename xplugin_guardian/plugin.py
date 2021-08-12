@@ -26,7 +26,7 @@ from guardian.shortcuts import (
     get_users_with_perms
 )
 from xadmin.plugins.utils import get_context_dict
-from xadmin.views import BaseAdminPlugin, CommAdminView, ListAdminView, filter_hook, ModelFormAdminView
+from xadmin.views import BaseAdminPlugin, CommAdminView, ListAdminView, filter_hook, ModelFormAdminView, UpdateAdminView
 from xplugin_guardian import forms
 
 User = get_user_model()
@@ -99,6 +99,10 @@ class GuardianCommonView(CommAdminView):
         self.object_pk = kwargs['object_pk']
         self.model = self.get_model(self.app_label, self.model_name)
         self.opts = self.model._meta
+        self.edit_view = self.get_model_view(UpdateAdminView,
+                                             self.model,
+                                             self.object_pk)
+        self.admin_only_access = getattr(self.edit_view, 'guardian_admin_only_access', False)
 
     @staticmethod
     def get_model(app_label, model_name):
@@ -173,6 +177,9 @@ class GuardianCommonView(CommAdminView):
         return forms.AdminGroupObjectPermissionsForm
 
     def has_view_permission(self, obj=None):
+        if self.admin_only_access and not self.user.is_superuser:
+            return False
+
         view_codename = get_permission_codename('view', self.opts)
         change_codename = get_permission_codename('change', self.opts)
 
@@ -181,14 +188,23 @@ class GuardianCommonView(CommAdminView):
                 self.user.has_perm('%s.%s' % (self.app_label, change_codename)))
 
     def has_add_permission(self):
+        if self.admin_only_access and not self.user.is_superuser:
+            return False
+
         codename = get_permission_codename('add', self.opts)
         return ('add' not in self.remove_permissions) and self.user.has_perm('%s.%s' % (self.app_label, codename))
 
     def has_change_permission(self, obj=None):
+        if self.admin_only_access and not self.user.is_superuser:
+            return False
+
         codename = get_permission_codename('change', self.opts)
         return ('change' not in self.remove_permissions) and self.user.has_perm('%s.%s' % (self.app_label, codename))
 
     def has_delete_permission(self, obj=None):
+        if self.admin_only_access and not self.user.is_superuser:
+            return False
+
         codename = get_permission_codename('delete', self.opts)
         return ('delete' not in self.remove_permissions) and self.user.has_perm('%s.%s' % (self.app_label, codename))
 
