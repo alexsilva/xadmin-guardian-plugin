@@ -344,7 +344,7 @@ class GuardianManageUserView(GuardianCommonView):
         form.helper = self.get_form_helper()
         context = self.get_obj_perms_context(obj)
         context['media'] += form.media
-
+        context['object_change_url'] = self.get_model_url(self.model, "change", obj.pk)
         context['user_perms'] = get_user_perms(user, obj)
         context['user_obj'] = user
         context['form'] = form
@@ -395,7 +395,7 @@ class GuardianManageGroupView(GuardianCommonView):
         form.helper = self.get_form_helper()
         context = self.get_obj_perms_context(obj)
         context['media'] += form.media
-
+        context['object_change_url'] = self.get_model_url(self.model, "change", obj.pk)
         context['group_obj'] = group
         context['group_perms'] = get_group_perms(group, obj)
         context['form'] = form

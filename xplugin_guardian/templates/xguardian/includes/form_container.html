@@ -6,8 +6,9 @@
     <div class="card">
         <div class="form-actions card-body">
             <button type="submit" class="btn btn-primary" name="_save" data-loading-text="{% trans 'Saving..' %}">
-                <i class="fa fa-save"></i> {% trans 'Save' %}
+            <i class="fa fa-save"></i> {% trans 'Save' %}
             </button>
+            <a href="{{ object_change_url }}" class="btn btn-danger float-right">{% trans 'Cancel' %}</a>
         </div>
     </div>
 </form>
