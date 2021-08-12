@@ -10,7 +10,7 @@
     <div class="card">
         <div class="card-body">
             {% if permissions.user.data %}
-                {% include "xguardian/includes/permission_table.html" with permission=permissions.user only %}
+                {% include "xguardian/includes/permission_table.html" with permission=permissions.user %}
             {% endif %}
 
             <form class="exform" method="post">{% csrf_token %}
@@ -28,7 +28,7 @@
     <div class="card mt-1">
         <div class="card-body">
             {% if permissions.groups.data %}
-                {% include "xguardian/includes/permission_table.html" with permission=permissions.groups only %}
+                {% include "xguardian/includes/permission_table.html" with permission=permissions.groups %}
             {% endif %}
 
             <form class="exform" method="post">{% csrf_token %}

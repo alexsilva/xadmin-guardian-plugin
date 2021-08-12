@@ -12,7 +12,11 @@
         <tbody>
         {% for obj, perms in permission.data.items %}
             <tr>
-                <th scope="row" class="text-truncate" style="max-width: 150px;" title="{{ obj }}">{{ obj }}</th>
+                <th scope="row" class="text-truncate" style="max-width: 250px;" title="{{ obj }}">
+                    <a href="{% permission_edit_url obj %}">
+                        <i class="fa fa-edit"></i>
+                    </a>{{ obj }}
+                </th>
                 {% for codename in perms %}
                     <td>{{ codename }}</td>
                 {% endfor %}
