@@ -314,17 +314,29 @@ class GuardianManageView(GuardianCommonView):
 
 
 class GuardianManagerCommonView(GuardianCommonView):
+    def init_request(self, *args, **kwargs):
+        super().init_request(*args, **kwargs)
+        self.object = None
+
     @filter_hook
     def get_media(self):
         media = super().get_media()
         media += self.vendor('xadmin.page.form.js', 'xadmin.form.css')
         return media
 
-    def post_response(self, obj, form):
+    def get_redirect_url(self):
+        """redirect to after post"""
+        url = self.get_admin_url("guardian_permissions",
+                           app_label=self.opts.app_label,
+                           model_name=self.opts.model_name,
+                           object_pk=self.object.pk)
+        return url
+
+    def post_response(self, form):
         form.save_obj_perms()
         msg = ugettext("Permissions saved.")
         messages.success(self.request, msg)
-        return redirect(self.get_model_url(self.model, "change", obj.pk))
+        return redirect(self.get_redirect_url())
 
 
 class GuardianManageUserView(GuardianManagerCommonView):
@@ -334,29 +346,31 @@ class GuardianManageUserView(GuardianManagerCommonView):
         self.user_id = kwargs['user_id']
 
     def get(self, request, **kwargs):
+        if not self.has_change_permission():
+            return redirect(self.get_admin_url('index'))
+
+        self.user_obj = get_object_or_404(User, pk=self.user_id)
+        self.object = get_object_or_404(self.get_queryset(),
+                                        pk=self.object_pk)
+
         return self.obj_perms_manage_user_view(request, **kwargs)
 
     def obj_perms_manage_user_view(self, request, **kwargs):
         """
         Manages selected users' permissions for current object.
         """
-        if not self.has_change_permission():
-            return redirect(self.get_admin_url('index'))
-
-        user = get_object_or_404(User, pk=self.user_id)
-        obj = get_object_or_404(self.get_queryset(), pk=self.object_pk)
         form_class = self.get_obj_perms_manage_user_form(request)
-        form = form_class(user, obj, request.POST or None)
+        form = form_class(self.user_obj, self.object, request.POST or None)
 
         if self.request_method == 'post' and form.is_valid():
-            return self.post_response(obj, form)
+            return self.post_response(form)
 
         form.helper = self.get_form_helper()
-        context = self.get_obj_perms_context(obj)
+        context = self.get_obj_perms_context(self.object)
         context['media'] += form.media
-        context['object_change_url'] = self.get_model_url(self.model, "change", obj.pk)
-        context['user_perms'] = get_user_perms(user, obj)
-        context['user_obj'] = user
+        context['object_change_url'] = self.get_model_url(self.model, "change", self.object.pk)
+        context['user_perms'] = get_user_perms(self.user_obj, self.object)
+        context['user_obj'] = self.user_obj
         context['form'] = form
 
         return render(request, self.get_obj_perms_manage_user_template(),
@@ -373,32 +387,31 @@ class GuardianManageGroupView(GuardianManagerCommonView):
         self.group_id = kwargs['group_id']
 
     def get(self, request, **kwargs):
+        if not self.has_change_permission():
+            return redirect(self.get_admin_url('index'))
+
+        self.group_obj = get_object_or_404(Group, id=self.group_id)
+        self.object = get_object_or_404(self.get_queryset(),
+                                        pk=self.object_pk)
+
         return self.obj_perms_manage_group_view(request, **kwargs)
 
     def obj_perms_manage_group_view(self, request, **kwargs):
         """
         Manages selected groups' permissions for current object.
         """
-        if not self.has_change_permission():
-            post_url = self.get_admin_url('index')
-            return redirect(post_url)
-
-        group = get_object_or_404(Group, id=self.group_id)
-
-        obj = get_object_or_404(self.get_queryset(), pk=self.object_pk)
-
         form_class = self.get_obj_perms_manage_group_form(request)
-        form = form_class(group, obj, request.POST or None)
+        form = form_class(self.group_obj, self.object, request.POST or None)
 
         if self.request_method == 'post' and form.is_valid():
-            return self.post_response(obj, form)
+            return self.post_response(form)
 
         form.helper = self.get_form_helper()
-        context = self.get_obj_perms_context(obj)
+        context = self.get_obj_perms_context(self.object)
         context['media'] += form.media
-        context['object_change_url'] = self.get_model_url(self.model, "change", obj.pk)
-        context['group_obj'] = group
-        context['group_perms'] = get_group_perms(group, obj)
+        context['object_change_url'] = self.get_model_url(self.model, "change", self.object.pk)
+        context['group_obj'] = self.group_obj
+        context['group_perms'] = get_group_perms(self.group_obj, self.object)
         context['form'] = form
 
         return render(request, self.get_obj_perms_manage_group_template(), context)
