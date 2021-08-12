@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='xadmin-guardian-plugin',
@@ -7,7 +7,7 @@ setup(
     install_requires=[
         'django-guardian'
     ],
-    packages=['xplugin_guardian'],
+    packages=['xplugin_guardian', "xplugin_guardian.templatetags"],
     url='https://github.com/alexsilva/xadmin.plugin.guardian',
     license='MIT',
     author='alex',
