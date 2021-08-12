@@ -38,6 +38,7 @@ class GuardianPlugin(BaseAdminPlugin):
     view existing permissions or add/change those permissions.
     """
     guardian_permissions = False
+    guardian_admin_only_access = False
 
     guardian_user_owned_objects_field = 'user'
     guardian_group_owned_objects_field = 'group'
@@ -48,7 +49,10 @@ class GuardianPlugin(BaseAdminPlugin):
     guardian_permission_button_title = _("Object permissions")
 
     def init_request(self, *args, **kwargs):
-        return self.guardian_permissions
+        active = self.guardian_permissions
+        if self.guardian_admin_only_access:
+            active &= self.user.is_superuser
+        return active
 
     def queryset(self, qs):
         if self.user.is_superuser:
