@@ -64,13 +64,14 @@ class GuardianPlugin(BaseAdminPlugin):
         return qs
 
     def get_context(self, context):
-        if isinstance(getattr(self.admin_view, 'org_obj', None), models.Model):  # is update view
+        org_obj = getattr(self.admin_view, 'org_obj', None)
+        if org_obj and org_obj.pk:  # is update view
             context.setdefault('guardian', {'button': {
                 'title': self.guardian_permission_button_title,
                 'url': self.get_admin_url("guardian_permissions",
                                         app_label=self.opts.app_label,
                                         model_name=self.opts.model_name,
-                                        object_pk=self.admin_view.org_obj.pk)
+                                        object_pk=org_obj.pk)
             }})
         return context
 
