@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
 	name='xadmin-guardian-plugin',
-	version='1.0.0',
+	version='2.0.0',
 	include_package_data=True,
 	install_requires=[
 		'django-guardian'
