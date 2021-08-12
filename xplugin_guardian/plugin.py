@@ -283,6 +283,7 @@ class GuardianManageView(GuardianCommonView):
         group_form.helper = helper
 
         context = self.get_obj_perms_context(obj)
+        context['object_change_url'] = self.get_model_url(self.model, "change", self.object_pk)
 
         def get_max_length(permissions):
             counters = [len(perms) for user, perms in permissions.items()]
@@ -324,19 +325,24 @@ class GuardianManagerCommonView(GuardianCommonView):
         media += self.vendor('xadmin.page.form.js', 'xadmin.form.css')
         return media
 
-    def get_redirect_url(self):
-        """redirect to after post"""
+    def get_permissions_url(self):
+        """Url of the permissions screen"""
         url = self.get_admin_url("guardian_permissions",
                            app_label=self.opts.app_label,
                            model_name=self.opts.model_name,
                            object_pk=self.object.pk)
         return url
 
+    def get_obj_perms_context(self, obj):
+        context = super().get_obj_perms_context(obj)
+        context['object_permissions_url'] = self.get_permissions_url()
+        return context
+
     def post_response(self, form):
         form.save_obj_perms()
         msg = ugettext("Permissions saved.")
         messages.success(self.request, msg)
-        return redirect(self.get_redirect_url())
+        return redirect(self.get_permissions_url())
 
 
 class GuardianManageUserView(GuardianManagerCommonView):
@@ -367,10 +373,9 @@ class GuardianManageUserView(GuardianManagerCommonView):
 
         form.helper = self.get_form_helper()
         context = self.get_obj_perms_context(self.object)
-        context['media'] += form.media
-        context['object_change_url'] = self.get_model_url(self.model, "change", self.object.pk)
         context['user_perms'] = get_user_perms(self.user_obj, self.object)
         context['user_obj'] = self.user_obj
+        context['media'] += form.media
         context['form'] = form
 
         return render(request, self.get_obj_perms_manage_user_template(),
@@ -408,10 +413,9 @@ class GuardianManageGroupView(GuardianManagerCommonView):
 
         form.helper = self.get_form_helper()
         context = self.get_obj_perms_context(self.object)
-        context['media'] += form.media
-        context['object_change_url'] = self.get_model_url(self.model, "change", self.object.pk)
-        context['group_obj'] = self.group_obj
         context['group_perms'] = get_group_perms(self.group_obj, self.object)
+        context['group_obj'] = self.group_obj
+        context['media'] += form.media
         context['form'] = form
 
         return render(request, self.get_obj_perms_manage_group_template(), context)
