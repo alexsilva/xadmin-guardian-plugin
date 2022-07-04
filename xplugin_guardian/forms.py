@@ -11,7 +11,7 @@ class AdminUserObjectPermissionsForm(UserObjectPermissionsForm):
     """
 
     def get_obj_perms_field_widget(self):
-        return SelectMultipleTransfer(u"", False)
+        return SelectMultipleTransfer(verbose_name="", is_stacked=False)
 
 
 class AdminGroupObjectPermissionsForm(GroupObjectPermissionsForm):
@@ -22,4 +22,4 @@ class AdminGroupObjectPermissionsForm(GroupObjectPermissionsForm):
     """
 
     def get_obj_perms_field_widget(self):
-        return SelectMultipleTransfer(u"", True)
+        return SelectMultipleTransfer(verbose_name="", is_stacked=False)
