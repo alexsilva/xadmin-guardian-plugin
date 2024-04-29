@@ -10,8 +10,8 @@ from django.contrib.auth import get_permission_codename, get_user_model
 from django.db import models
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
-from django.utils.translation import ugettext
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 import django.forms as django_forms
 from guardian.admin import (
     UserManage,
@@ -356,7 +356,7 @@ class GuardianManagerCommonView(GuardianCommonView):
 
     def post_response(self, form):
         form.save_obj_perms()
-        msg = ugettext("Permissions saved.")
+        msg = gettext("Permissions saved.")
         messages.success(self.request, msg)
         return redirect(self.get_permissions_url())
 
